@@ -196,55 +196,16 @@ int update(float dt)
 // Static to avoid reallocating it ever time we run the function
   static SDL_Event event;
 
-    float p = exiting*exiting; // quadratic
+  // Write each APP_NAMEevent to our static variable
 
-    float wheel = sin(PI*2*t);
-
-    float s = (196 + 64*wheel)*(1.0f - p);
-
-    sprite.x = global::viewport.x * (0.5f + 0.5f * p) + s*0.5f*p - s*0.5f;
-    sprite.y = global::viewport.y * 0.5f - s*0.5f;
-    sprite.w = sprite.h = s;
 
   while (SDL_PollEvent(&event))
   {
-  /*      flags |= current_state.treatEvent(event);
+        flags |= current_state.treatEvent(event);
   }
 
   // No event
-  return flags;*/
-
-    entering += dt;
-
-    float p = entering*entering; // quadratic
-
-    float s = 256*p;
-
-    sprite.x = global::viewport.x * 0.5f * p - s*0.5f;
-    sprite.y = global::viewport.y * 0.5f - s*0.5f;
-    sprite.w = sprite.h = s;
-
-    if(entering > 1)
-      entering = 1;
-  }
-
-  // ENTER HAS FINISHED
-  else
-  {
-    t += dt;
-    if(t > 1)
-      t -= 1;
-    float wheel = sin(PI*2*t);
-
-    float s = 196 + 64*wheel;
-    sprite.x = global::viewport.x * 0.5f - s*0.5f;
-    sprite.y = global::viewport.y * 0.5f - s*0.5 + 0.2f*s*wheel;
-    sprite.h = sprite.w = s;
-
-  }
-
-  // Treat input events
-  return treatEvents();
+  return flags;
 }
 
 int draw()
@@ -253,11 +214,6 @@ int draw()
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
 
-  // Only draw if enter has begun
-  if(entering > 0 && exiting < 1)
-  {
-    texture.draw(nullptr, &sprite);
-  }
   // Flip the buffers to update the screen
   SDL_GL_SwapWindow(window);
 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Rubika" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Rubika" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add option="-DDEBUG" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Rubika" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="`sdl-config --cflags`" />
+			<Add directory="%SDL_ROOT%/include/SDL2" />
+			<Add directory="%SDL_IMAGE_ROOT%/include/SDL2/" />
+		</Compiler>
+		<Linker>
+			<Add option="-lmingw32  -lSDL2 -lSDL2main -lSDL2_image -lSDL2.dll" />
+			<Add library="opengl32" />
+			<Add directory="%SDL_ROOT%/lib" />
+			<Add directory="%SDL_IMAGE_ROOT%/lib" />
+		</Linker>
+		<Unit filename="babysitter.cpp" />
+		<Unit filename="babysitter.h" />
+		<Unit filename="src/debug/assert.h" />
+		<Unit filename="src/debug/log.cpp" />
+		<Unit filename="src/debug/log.h" />
+		<Unit filename="src/debug/warn.h" />
+		<Unit filename="src/global.cpp" />
+		<Unit filename="src/global.hpp" />
+		<Unit filename="src/graphics/Texture.cpp" />
+		<Unit filename="src/graphics/Texture.hpp" />
+		<Unit filename="src/graphics/opengl.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/math/Rect.hpp" />
+		<Unit filename="src/math/V2.hpp" />
+		<Unit filename="src/math/wjd_math.cpp" />
+		<Unit filename="src/math/wjd_math.h" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

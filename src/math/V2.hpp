@@ -1,0 +1,96 @@
+#pragma once
+
+#include <iostream>
+
+#define ORIGIN(type) V2<type>(0,0)
+#define SQUARE(type, size) V2<type>(SIZE,SIZE)
+
+// Simple vector classes
+template <typename T>
+class V2
+{
+  /* ATTRIBUTES */
+public:
+  T x, y;
+
+  /* METHODS */
+public:
+  // Constructors
+  V2();
+  V2(T x, T y);
+  V2(std::istream& in);
+  template <typename U> explicit V2(const V2<U>& source);
+
+  // Cast operators
+  template <typename U> operator V2<U>() const;
+  operator bool() const;
+
+  // Arithmetic operators
+  template <typename U>
+  V2& operator= (const V2<U>& source);
+  // vector addition
+  V2& operator+=(V2 const& other);
+  V2 operator+(V2 const& other) const;
+  V2& operator-=(V2 const& other);
+  V2 operator-(V2 const& other) const;
+  V2 operator-() const;   // unary minus or "additive inverse"
+  // scaling
+  V2& operator*=(T k);
+  V2 operator*(T k) const;
+  V2& operator/=(T k);
+  V2 operator/(T k) const;
+  // element-wise multiplication, division
+  V2& operator*=(V2 const& other);
+  V2 operator*(V2 const& other) const;
+  V2& operator/=(V2 const& other);
+  V2 operator/(V2 const& other) const;
+
+  // incrementation and decrementation
+  V2& operator++(); // prefix
+  V2& operator--();
+  V2 operator++(int); // postfix
+  V2 operator--(int);
+
+  // Array-style access
+  T* front();
+  T& operator[](size_t i);
+  const T& operator[](size_t i) const;
+
+  // accessors
+  V2 abs() const;
+  V2<int> sign() const;
+  float getAngle() const;
+  float getNorm() const;
+  float getNorm2() const;
+  V2<T>& setMagnitude(float new_magnitude);
+  V2<T>& normalise();
+
+  // outstream
+  void print(std::ostream& stream) const;
+
+  // instream
+  void read(std::istream& in);
+};
+
+// static functions
+template <typename T> float dot(V2<T>const a, V2<T>const b);
+template <typename T> V2<T> cross(V2<T>const a, V2<T>const b);
+template <typename T> T det(V2<T>const a, V2<T>const b);
+template <typename T> V2<T> inter(V2<T>const a, V2<T>const b, T f);
+
+// outstream operator
+template <typename T>
+std::ostream& operator<<(std::ostream& stream, V2<T> const& v);
+
+// instream operator
+template <typename T>
+std::istream& operator>>(std::istream& in, V2<T>& v);
+
+typedef V2<int> iV2;
+typedef V2<unsigned int> uV2;
+typedef V2<float> fV2;
+typedef V2<double> dV2;
+
+// NB - "Inline" files are implementations that are included rather than
+// compiled. They are especially useful for templates.
+#include "V2.inl"

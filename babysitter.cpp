@@ -19,6 +19,7 @@ namespace babysitter
 
   int update(float dt)
   {
+    // Update all the babies
     for(auto i = babies.begin(); i != babies.end(); i++)
     {
       baby_t &b = (**i);
@@ -29,7 +30,7 @@ namespace babysitter
     return 0;
   }
 
-  int sit(std::function<float(float)> progress)
+  int sit(std::function<float(float)> baby_step)
   {
     // All good
     return 0;

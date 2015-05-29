@@ -16,6 +16,8 @@ static fRect sprite(0, 0, 256, 256);
 static Texture texture;
 static bool toInGame;
 
+using namespace std;
+
 namespace gamestate
 {
 
@@ -141,7 +143,7 @@ static int init()
     return 0;
   };
 
-  state.leave = [](gamestate::t &next)
+  state.leave = [](gamestate::t &next, function<int()> onleft)
   {
     log("Leaving title");
 
@@ -149,7 +151,7 @@ static int init()
     texture.unload();
 
     // All okay
-    return 0;
+    return onleft();
   };
 
   state.enter = [](gamestate::t &previous)

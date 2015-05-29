@@ -11,7 +11,7 @@ namespace gamestate
     std::function<int()> draw;
     std::function<int(SDL_Event &event)> treatEvent;
     std::function<int(gamestate::t &previous)> enter;
-    std::function<int(gamestate::t &next)> leave;
+    std::function<int(gamestate::t &next, std::function<int()> on_left)> leave;
   };
 
   int switchTo(gamestate::t &next);

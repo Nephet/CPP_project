@@ -1,5 +1,9 @@
 #include "gamestate.h"
 
+#include <functional>
+
+using namespace std;
+
 static gamestate::t *current = nullptr;
 
 namespace gamestate
@@ -8,17 +12,30 @@ namespace gamestate
   {
     if(current)
     {
-      current->leave(next);
-      next.enter(*current);
+      current->leave(next, [&next]() {
+        next.enter(*current);
+        current = &next;
+
+        // Success
+        return 0;
+      });
     }
     else
+    {
       next.enter(next);
-    current = &next;
+      current = &next;
+    }
+
+    // Success
+    return 0;
   }
 
   int draw()
   {
     current->draw();
+
+    // Success
+    return 0;
   }
 
   int update(float dt)

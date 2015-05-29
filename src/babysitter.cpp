@@ -32,6 +32,22 @@ namespace babysitter
 
   int sit(std::function<float(float)> baby_step)
   {
+    auto b = new baby_t;
+    b->step = baby_step;
+    b->progress = 0.0f;
+
+    babies.push_back(b);
+
+    // All good
+    return 0;
+  }
+
+  int clear()
+  {
+    for(auto i = babies.begin(); i != babies.end(); i++)
+      delete (*i);
+    babies.clear();
+
     // All good
     return 0;
   }

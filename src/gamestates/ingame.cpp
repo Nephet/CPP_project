@@ -22,6 +22,8 @@ static fRect sprite(0, 0, 180, 180),
 
 static float angle = 0.0f;
 
+using namespace std;
+
 namespace gamestate
 {
 
@@ -107,7 +109,7 @@ static int init()
     return 0;
   };
 
-  state.leave = [](gamestate::t &next)
+  state.leave = [](gamestate::t &next, function<int()> onleft)
   {
     log("Leaving ingame");
 
@@ -115,8 +117,8 @@ static int init()
     atlas.unload();
     spaceship.unload();
 
-    // All okay
-    return 0;
+    // Leave instantly
+    return onleft();
   };
 
   state.enter = [](gamestate::t &previous)

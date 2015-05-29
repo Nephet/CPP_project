@@ -24,3 +24,5 @@ obj/**
 **.lai
 **.la
 **.a
+
+doxygen

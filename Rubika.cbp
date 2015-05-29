@@ -67,6 +67,8 @@
 		<Unit filename="src/math/V2.inl" />
 		<Unit filename="src/math/wjd_math.cpp" />
 		<Unit filename="src/math/wjd_math.h" />
+		<Unit filename="src/spaceship.cpp" />
+		<Unit filename="src/spaceship.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

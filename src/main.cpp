@@ -96,8 +96,13 @@ int treatEvents()
 
 int update(float dt)
 {
-    // Cap delta-time
-    if(dt > MAX_DT)
+  log("dt = %f", dt);
+  // 0.25 secondes (normal)
+  // 0.35 secondes (no optim)
+  // 0.23
+
+  // Cap delta-time
+  if(dt > MAX_DT)
     dt = MAX_DT;
 
   // Update all the spaceships
@@ -246,12 +251,10 @@ int main(int argc, char *argv[])
 
   ASSERT(spaceship::init() == EXIT_SUCCESS, "Initialising spaceship module");
 
-for(int i=0; i<10000; i++){
-    spaceship::spawn(10*1, 10*i);
-}
-
-
-
+  for(int i = 0; i < 10000; i++)
+    spaceship::spawn(
+     RAND()*global::viewport.x,
+     RAND()*global::viewport.y);
 
   // --------------------------------------------------------------------------
   // START THE GAME LOOP

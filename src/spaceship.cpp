@@ -20,20 +20,32 @@ struct spaceship_t
   float y;
   float dx;
   float dy;
+  bool update_on_even;
 };
 
+static bool event_frame = true;
 static list<spaceship_t*> instances;
 
 static float rot_c = cos(PI*0.01);
 static float rot_s = sin(PI*0.01);
+
+static bool skip = true;
+static bool frame_impair= true;
 
 namespace spaceship
 {
 
   int update(float dt)
   {
+    event_frame = !event_frame;
     for(auto i = instances.begin(); i != instances.end(); i++)
     {
+
+      skip = !skip;
+
+      if((skip && event_frame) || (!skip && !event_frame))
+        continue;
+
       spaceship_t &s = (**i);
 
       // Turn the ship
@@ -46,14 +58,14 @@ namespace spaceship
 
       // Do we need to turn
       float dot = s.dx*nvx + s.dy*nvy;
-      if(dot < 0.99)
+      if(dot < 0.99f)
       {
         // Which direction shall we turn in?
         float det = s.dx*vy - s.dy*vx;
-        float rot_s_signed = det < 0 ? -rot_s : rot_s;
+        float rot_ss = det < 0 ? -rot_s : rot_s;
 
-        s.dx = s.dx*rot_c - s.dy*rot_s_signed;
-        s.dy = s.dx*rot_s_signed + s.dy*rot_c;
+        s.dx = s.dx*rot_c - s.dy*rot_ss;
+        s.dy = s.dx*rot_ss + s.dy*rot_c;
 
         // Normally we shouldn't need to do this!!!
         float norm = sqrt(s.dx*s.dx + s.dy*s.dy);
@@ -90,7 +102,7 @@ namespace spaceship
       float x = s.x + s.dx*128;
       float y = s.y + s.dy*128;
       fRect little(0, 0, 16, 16);
-      for(float t = 0.0f; t < 1.0f; t += 0.1f)
+      /*for(float t = 0.0f; t < 1.0f; t += 0.1f)
       {
         // Draw the spaceship's direction
         glColor4f(1.0f, 0.0f, 0.0f, 1);
@@ -104,7 +116,7 @@ namespace spaceship
         little.y = (1 - t)*s.y + t*global::mouse_y - 8;
         texture.draw(nullptr, &little);
       }
-      glColor4f(1.0f, 1.0f, 1.0f, 1);
+      glColor4f(1.0f, 1.0f, 1.0f, 1);*/
     }
 
      // Success
@@ -127,6 +139,7 @@ namespace spaceship
     s->y = y;
     s->dx = 0.0f;
     s->dy = 1.0f;
+    s->update_on_even = (event_frame * )
 
     instances.push_back(s);
 

@@ -13,12 +13,7 @@
 
 #include "math/wjd_math.h"
 
-<<<<<<< HEAD
-#include "gamestates/gamestate.h"
-#include "gamestates/title.h"
-=======
 #include "spaceship.h"
->>>>>>> 7313402480a951b2cbc344e84fc5f122cf30889b
 
 #include "global.hpp"
 
@@ -251,9 +246,10 @@ int main(int argc, char *argv[])
 
   ASSERT(spaceship::init() == EXIT_SUCCESS, "Initialising spaceship module");
 
-  spaceship::spawn(100, 100);
-  spaceship::spawn(300, 500);
-  spaceship::spawn(500, 300);
+for(int i=0; i<10000; i++){
+    spaceship::spawn(10*1, 10*i);
+}
+
 
 
 

@@ -18,6 +18,8 @@
 
 #include "global.hpp"
 
+#include "spaceship.h"
+
 //! --------------------------------------------------------------------------
 //! -------------------------- NAMESPACES
 //! --------------------------------------------------------------------------
@@ -43,21 +45,17 @@
 
 static SDL_Window *window;
 
-static Texture atlas, spaceship;
+static Texture atlas;
 
 static int tiles[GRID_W][GRID_H];
 
 static fRect lava(0, 0, 32, 32),
-  ice(32, 0, 32, 32),
-  sprite(0, 0, 128, 128);
+  ice(32, 0, 32, 32);
 
-static float spaceship_dx = 0.0f;
-static float spaceship_dy = -1.0f;
 
-static float c = cos(PI*0.01);
-static float s = sin(PI*0.01);
 
-static float mouse_x = 0.0f, mouse_y = 0.0f;
+
+
 
 //! --------------------------------------------------------------------------
 //! -------------------------- GAME LOOP
@@ -65,7 +63,7 @@ static float mouse_x = 0.0f, mouse_y = 0.0f;
 
 
 // The public line-drawing functions are just adaptors for this one
-void draw_line(float start_x, float start_y, float end_x, float end_y)
+/*void draw_line(float start_x, float start_y, float end_x, float end_y)
 {
   GLfloat points[4] = { start_x, start_y, end_x, end_y };
 
@@ -83,7 +81,7 @@ void draw_line(float start_x, float start_y, float end_x, float end_y)
     glDisable(GL_LINE_SMOOTH);
     glDisableClientState(GL_VERTEX_ARRAY);
   glPopMatrix();
-}
+}*/
 
 //! --------------------------------------------------------------------------
 //! -------------------------- GAME LOOP
@@ -115,8 +113,8 @@ int treatEvents()
         }
       break;
       case SDL_MOUSEMOTION:
-        mouse_x = event.motion.x;
-        mouse_y = event.motion.y;
+        global::mouse_x = event.motion.x;
+        global::mouse_y = event.motion.y;
       break;
       default:
         // not all possible inputs are needed, so we DO want a default break
@@ -134,34 +132,9 @@ int update(float dt)
     if(dt > MAX_DT)
     dt = MAX_DT;
 
+    spaceship::update(dt);
   // Centre the ship
-  sprite.x = (global::viewport.x - sprite.w) * 0.5f;
-  sprite.y = (global::viewport.y - sprite.h) * 0.5f;
-
-  // Turn the ship
-  float x = sprite.x - sprite.w*0.5f;
-  float y = sprite.y - sprite.h*0.5f;
-  float vx = mouse_x - x;
-  float vy = mouse_y - y;
-
-  float norm_v = sqrt(vx*vx + vy*vy);
-  float nvx = vx/norm_v;
-  float nvy = vy/norm_v;
-
-  // Do we need to turn
-  float dot = spaceship_dx*nvx + spaceship_dy*nvy;
-  if(dot < 0.9)
-  {
-    // Which direction shall we turn in?
-    float det = spaceship_dx*vy - spaceship_dy*vx;
-    float ss = det < 0 ? -s : s;
-
-    spaceship_dx = spaceship_dx*c - spaceship_dy*ss;
-    spaceship_dy = spaceship_dx*ss + spaceship_dy*c;
-    float norm = sqrt(spaceship_dx*spaceship_dx + spaceship_dy*spaceship_dy);
-    spaceship_dx /= norm;
-    spaceship_dy /= norm;
-  }
+    //int flags
 
 
   // Treat input events
@@ -195,13 +168,7 @@ int draw()
     }
   }
 */
-  // Draw the sprite
-  spaceship.draw(nullptr, &sprite);
-
-  float x = sprite.x + sprite.w*0.5f + spaceship_dx*128;
-  float y = sprite.y + sprite.h*0.5f + spaceship_dy*128;
-  fRect little(x - 8, y - 8, 16, 16);
-  spaceship.draw(nullptr, &little);
+    spaceship::draw();
 
   // Flip the buffers to update the screen
   SDL_GL_SwapWindow(window);
@@ -291,7 +258,7 @@ int main(int argc, char *argv[])
   // --------------------------------------------------------------------------
 
   ASSERT(atlas.load("assets/atlas.png") == EXIT_SUCCESS, "Opening atlas texture");
-  ASSERT(spaceship.load("assets/medspeedster.png") == EXIT_SUCCESS, "Opening spaceship texture");
+  //ASSERT(spaceship.load("assets/medspeedster.png") == EXIT_SUCCESS, "Opening spaceship texture");
 
   // --------------------------------------------------------------------------
   // INITIALISE THE GRID
@@ -302,6 +269,10 @@ int main(int argc, char *argv[])
   {
     tiles[x][y] = (rand()%2 ? TILE_ICE : TILE_LAVA);
   }
+
+    ASSERT(spaceship::init() == EXIT_SUCCESS, "init spaceship");
+
+  //sprite.y = (global::viewport.y - sprite.h) * 0.5f;
 
   // --------------------------------------------------------------------------
   // START THE GAME LOOP

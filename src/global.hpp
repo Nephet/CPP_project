@@ -15,7 +15,7 @@ namespace global
 {
   extern iV2 viewport;
   extern fV2 scale;
-  float mouse_x;
-  float mouse_y;
+  extern float mouse_x;
+  extern float mouse_y;
 };
 

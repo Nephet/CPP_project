@@ -1,11 +1,10 @@
 #pragma once
 
-
 namespace spaceship
 {
-
-    int update(float);
-    int draw();
-    int init();
-    int spawn(float, float);
+  int update(float dt);
+  int draw();
+  int init();
+  int spawn(float x, float y);
 }
+

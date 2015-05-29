@@ -13,8 +13,12 @@
 
 #include "math/wjd_math.h"
 
+<<<<<<< HEAD
 #include "gamestates/gamestate.h"
 #include "gamestates/title.h"
+=======
+#include "spaceship.h"
+>>>>>>> 7313402480a951b2cbc344e84fc5f122cf30889b
 
 #include "global.hpp"
 
@@ -51,37 +55,6 @@ static int tiles[GRID_W][GRID_H];
 
 static fRect lava(0, 0, 32, 32),
   ice(32, 0, 32, 32);
-
-
-
-
-
-
-//! --------------------------------------------------------------------------
-//! -------------------------- GAME LOOP
-//! --------------------------------------------------------------------------
-
-
-// The public line-drawing functions are just adaptors for this one
-/*void draw_line(float start_x, float start_y, float end_x, float end_y)
-{
-  GLfloat points[4] = { start_x, start_y, end_x, end_y };
-
-  // Start up
-  glPushMatrix();
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnable(GL_LINE_SMOOTH);
-    glColor4f(1, 1, 1, 1);
-
-    // Draw points
-    glVertexPointer(2, GL_FLOAT, 0, points);
-    glDrawArrays(GL_LINES, 0, 2);
-
-    // Shut down
-    glDisable(GL_LINE_SMOOTH);
-    glDisableClientState(GL_VERTEX_ARRAY);
-  glPopMatrix();
-}*/
 
 //! --------------------------------------------------------------------------
 //! -------------------------- GAME LOOP
@@ -132,13 +105,11 @@ int update(float dt)
     if(dt > MAX_DT)
     dt = MAX_DT;
 
-    spaceship::update(dt);
-  // Centre the ship
-    //int flags
-
+  // Update all the spaceships
+  int flags = spaceship::update(dt);
 
   // Treat input events
-  return treatEvents();
+  return flags | treatEvents();
 }
 
 int draw()
@@ -168,13 +139,14 @@ int draw()
     }
   }
 */
-    spaceship::draw();
+  // Draw all the spaceships
+  int flags = spaceship::draw();
 
   // Flip the buffers to update the screen
   SDL_GL_SwapWindow(window);
 
-  // All good
-  return EXIT_SUCCESS;
+  // Returns flags
+  return flags;
 }
 
 //! --------------------------------------------------------------------------
@@ -258,7 +230,6 @@ int main(int argc, char *argv[])
   // --------------------------------------------------------------------------
 
   ASSERT(atlas.load("assets/atlas.png") == EXIT_SUCCESS, "Opening atlas texture");
-  //ASSERT(spaceship.load("assets/medspeedster.png") == EXIT_SUCCESS, "Opening spaceship texture");
 
   // --------------------------------------------------------------------------
   // INITIALISE THE GRID
@@ -273,6 +244,18 @@ int main(int argc, char *argv[])
     ASSERT(spaceship::init() == EXIT_SUCCESS, "init spaceship");
 
   //sprite.y = (global::viewport.y - sprite.h) * 0.5f;
+
+  // --------------------------------------------------------------------------
+  // INITIALISE THE GAME OBJECTS
+  // --------------------------------------------------------------------------
+
+  ASSERT(spaceship::init() == EXIT_SUCCESS, "Initialising spaceship module");
+
+  spaceship::spawn(100, 100);
+  spaceship::spawn(300, 500);
+  spaceship::spawn(500, 300);
+
+
 
   // --------------------------------------------------------------------------
   // START THE GAME LOOP

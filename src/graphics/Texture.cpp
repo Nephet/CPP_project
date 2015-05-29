@@ -137,6 +137,8 @@ GLuint Texture::getHandle() const
   return handle;
 }
 
+static GLuint last_handle = 0;
+
 void Texture::draw(const fRect* src_ptr, const fRect* dst_ptr, float angle)
 {
   glPushMatrix();
@@ -158,7 +160,11 @@ void Texture::draw(const fRect* src_ptr, const fRect* dst_ptr, float angle)
   glScalef(global::scale.x, global::scale.y, 0.0f);
 
   // Bind the texture to which subsequent calls refer to
-  glBindTexture(GL_TEXTURE_2D, handle);
+  if(handle != last_handle)
+  {
+    glBindTexture(GL_TEXTURE_2D, handle);
+    last_handle = handle;
+  }
 
   // Tell graphics hardware what to expect
   glEnableClientState(GL_VERTEX_ARRAY);
@@ -196,5 +202,5 @@ void Texture::draw(const fRect* src_ptr, const fRect* dst_ptr, float angle)
 
   // Reset back to normal
   glPopMatrix();
-  glBindTexture(GL_TEXTURE_2D, 0);
+  //glBindTexture(GL_TEXTURE_2D, 0);
 }

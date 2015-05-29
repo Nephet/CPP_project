@@ -22,17 +22,76 @@
 //! -------------------------- NAMESPACES
 //! --------------------------------------------------------------------------
 
-using namespace std;
+// --------------------------------------------------------------------------
+// GRID
+// --------------------------------------------------------------------------
+
+#define GRID_W 50
+#define GRID_H 50
+#define TILE_LAVA 1
+#define TILE_ICE 2
+
+// --------------------------------------------------------------------------
+// EVENTS
+// --------------------------------------------------------------------------
+
+#define EVENT_QUIT 0b00000001
 
 //! --------------------------------------------------------------------------
 //! -------------------------- WORKSPACE
 //! --------------------------------------------------------------------------
 
-static SDL_Window *window = nullptr;
+static SDL_Window *window;
+
+static Texture atlas, spaceship;
+
+static int tiles[GRID_W][GRID_H];
+
+static fRect lava(0, 0, 32, 32),
+  ice(32, 0, 32, 32),
+  sprite(0, 0, 128, 128);
+
+static float angle = 0.0f;
 
 //! --------------------------------------------------------------------------
 //! -------------------------- GAME LOOP
 //! --------------------------------------------------------------------------
+
+int treatEvents()
+{
+  // Static to avoid reallocating it ever time we run the function
+  static SDL_Event event;
+
+  // Write each APP_NAMEevent to our static variable
+  while (SDL_PollEvent(&event))
+  {
+    switch (event.type)
+    {
+      // Exit if the window is closed (ex: pressing the cross at the top)
+      case SDL_QUIT:
+        return EVENT_QUIT;
+      break;
+
+      // Check for key-presses
+      case SDL_KEYDOWN:
+        switch (event.key.keysym.sym)
+        {
+          case SDLK_ESCAPE:
+            return EVENT_QUIT;
+          default:
+            break;
+        }
+      break;
+
+      default:
+        // not all possible inputs are needed, so we DO want a default break
+      break;
+    }
+  }
+
+  // No event
+  return 0;
+}
 
 int update(float dt)
 {
@@ -40,18 +99,13 @@ int update(float dt)
   if(dt > MAX_DT)
     dt = MAX_DT;
 
-  // Update, accumulate event flags
-  int flags = gamestate::update(dt);
+  // Spin the ship
+  angle += 360*dt;
 
-  // Treat input events
-  static SDL_Event event;
+  // Centre the ship
+  sprite.x = (global::viewport.x - sprite.w) * 0.5f;
+  sprite.y = (global::viewport.y - sprite.h) * 0.5f;
 
-  // Write each event to our static variable
-  while (SDL_PollEvent(&event))
-    flags |= gamestate::treatEvent(event);
-
-  // Returns flags
-  return flags;
 }
 
 int draw()
@@ -60,8 +114,28 @@ int draw()
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
 
-  // Draw the current state
-  gamestate::draw();
+  // Draw the grid
+  for(int x = 0; x < GRID_W; x++)
+  for(int y = 0; y < GRID_H; y++)
+  {
+    static fRect tile(0, 0, 32, 32);
+
+    tile.x = tile.w*x;
+    tile.y = tile.h*y;
+    switch(tiles[x][y])
+    {
+      case TILE_ICE:
+        atlas.draw(&ice, &tile);
+        break;
+
+      case TILE_LAVA:
+        atlas.draw(&lava, &tile);
+        break;
+    }
+  }
+
+  // Draw the sprite
+  spaceship.draw(nullptr, &sprite, angle);
 
   // Flip the buffers to update the screen
   SDL_GL_SwapWindow(window);
@@ -147,10 +221,21 @@ int main(int argc, char *argv[])
   } // start opengl
 
   // --------------------------------------------------------------------------
-  // SET UP GAMESTATES
+  // LOAD THE IMAGES
   // --------------------------------------------------------------------------
 
-  gamestate::switchTo(gamestate::title::get());
+  ASSERT(atlas.load("assets/atlas.png") == EXIT_SUCCESS, "Opening atlas texture");
+  ASSERT(spaceship.load("assets/medspeedster.png") == EXIT_SUCCESS, "Opening spaceship texture");
+
+  // --------------------------------------------------------------------------
+  // INITIALISE THE GRID
+  // --------------------------------------------------------------------------
+
+  for(int x = 0; x < GRID_W; x++)
+  for(int y = 0; y < GRID_H; y++)
+  {
+    tiles[x][y] = (rand()%2 ? TILE_ICE : TILE_LAVA);
+  }
 
   // --------------------------------------------------------------------------
   // START THE GAME LOOP

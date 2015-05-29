@@ -51,7 +51,23 @@ static fRect lava(0, 0, 32, 32),
   ice(32, 0, 32, 32),
   sprite(0, 0, 128, 128);
 
-static float angle = 0.0f;
+    static float spaceship_dx= 0.0f;
+    static float spaceship_dy= -1.0f;
+
+    static float c= cos(PI*0.1f);
+    static float s= sin(PI*0.1f);
+
+    static float mouse_x = 0.0f, mouse_y=0.0f;
+
+
+void draw_line(float start_x, float start_y, float end_x, float end_y)
+{
+    GLfloat points[4] = { start_x, start_y, end_x, end_y};
+    //auto points = {start_x, start_y, end_x, end_y};
+
+
+}
+
 
 //! --------------------------------------------------------------------------
 //! -------------------------- GAME LOOP
@@ -82,7 +98,10 @@ int treatEvents()
             break;
         }
       break;
-
+      case SDL_MOUSEMOTION:
+        mouse_x = event.motion.x;
+        mouse_y = event.motion.y;
+      break;
       default:
         // not all possible inputs are needed, so we DO want a default break
       break;
@@ -95,17 +114,43 @@ int treatEvents()
 
 int update(float dt)
 {
-  // Cap delta-time
-  if(dt > MAX_DT)
+    // Cap delta-time
+    if(dt > MAX_DT)
     dt = MAX_DT;
 
-  // Spin the ship
-  angle += 360*dt;
+    // Spin the ship
+    //angle += 360*dt;
 
-  // Centre the ship
-  sprite.x = (global::viewport.x - sprite.w) * 0.5f;
-  sprite.y = (global::viewport.y - sprite.h) * 0.5f;
+    // Centre the ship
+    sprite.x = (global::viewport.x - sprite.w) * 0.5f;
+    sprite.y = (global::viewport.y - sprite.h) * 0.5f;
+    float vx = mouse_x - sprite.x;
+    float vy = mouse_y - sprite.y;
 
+    float norm_v = sqrt(vx*vy + vy*vy);
+    float nvx = vx/norm_v;
+    float nvy = vy/norm_v;
+
+    float dot = spaceship_dx*nvx + spaceship_dy*nvy;
+    if(dot < 0.9f)
+    {
+        float det = spaceship_dx*vy - spaceship_dy*vx;
+        float ss = det < 0 ? -s : s;
+
+        spaceship_dx = spaceship_dx*c - spaceship_dy*s;
+        spaceship_dy = spaceship_dx*s + spaceship_dy*c;
+
+        float norm = sqrt(spaceship_dx*spaceship_dx+ spaceship_dy*spaceship_dy);
+        spaceship_dx /= norm;
+        spaceship_dy /= norm;
+    }
+
+
+
+   // rotated_point.x = point.x * cos(angle) - point.y * sin(angle);
+    //rotated_point.y = point.x * sin(angle) + point.y * cos(angle);
+
+    return treatEvents();
 
 }
 
@@ -136,7 +181,8 @@ int draw()
   }
 
   // Draw the sprite
-  spaceship.draw(nullptr, &sprite, angle);
+  spaceship.draw(nullptr, &sprite);
+  //draw_line(sprite.x, sprite.y, sprite.x + spaceship_dx*32, sprite.y + spaceship_dy*32)
 
   // Flip the buffers to update the screen
   SDL_GL_SwapWindow(window);
